@@ -1,0 +1,10 @@
+
+t.wasm:	file format wasm 0x1
+
+Sections:
+
+     Type start=0x0000000a end=0x00000010 (size=0x00000006) count: 1
+ Function start=0x00000012 end=0x00000014 (size=0x00000002) count: 1
+   Memory start=0x00000016 end=0x00000019 (size=0x00000003) count: 1
+   Export start=0x0000001b end=0x00000022 (size=0x00000007) count: 1
+     Code start=0x00000024 end=0x00000032 (size=0x0000000e) count: 1
