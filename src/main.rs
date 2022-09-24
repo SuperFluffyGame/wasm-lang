@@ -25,9 +25,12 @@ fn main() {
 
     println!("{:02X?}", module.export_bytes());
 
-    let input = "let a = 1;";
-    let lexer = Lexer::new(input);
+    let input = "let a = 2.1;";
+    let mut lexer = Lexer::new(input);
     let toks = lexer.lex();
+
+    println!("{:?}", toks);
+    println!("{:?}", lexer.errors);
     let parser = Parser::new(&toks);
-    let program = parser.parse();
+    // let program = parser.parse();
 }
