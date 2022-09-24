@@ -1,4 +1,4 @@
-use crate::wasm::op_code::value;
+use crate::compiler::wasm::op_code::value;
 pub enum ValueType {
     I32,
     I64,

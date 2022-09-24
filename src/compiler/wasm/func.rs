@@ -1,4 +1,4 @@
-use crate::{leb128::leb_u32, wasm::types::*};
+use crate::compiler::{leb128::leb_u32, wasm::types::*};
 
 pub struct Func {
     name: String,

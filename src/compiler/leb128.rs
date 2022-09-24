@@ -1,3 +1,5 @@
+#![allow(dead_code)]
+
 fn to_lebs(n: i64) -> Vec<u8> {
     let mut b = Vec::new();
     leb128::write::signed(&mut b, n).expect("Error Converting to LEB128");

@@ -1,7 +1,10 @@
-use wasm_lang::wasm::{
-    func::Func,
-    types::{I32instr, ValueType, VarInstr},
-    Module,
+use wasm_lang::{
+    compiler::wasm::{
+        func::Func,
+        types::{I32instr, ValueType, VarInstr},
+        Module,
+    },
+    parser::{Lexer, Parser},
 };
 fn main() {
     println!("Hello, world!");
@@ -21,4 +24,10 @@ fn main() {
     module.add_func(&add);
 
     println!("{:02X?}", module.export_bytes());
+
+    let input = "let a = 1;";
+    let lexer = Lexer::new(input);
+    let toks = lexer.lex();
+    let parser = Parser::new(&toks);
+    let program = parser.parse();
 }
