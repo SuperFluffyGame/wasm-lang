@@ -14,19 +14,12 @@ impl<'a> CharReader<'a> {
             _chars: s.chars().collect(),
         }
     }
-    pub fn peek(&self) -> Option<&char> {
-        self._chars.get(self.index)
+    pub fn peek(&self) -> Option<char> {
+        self._chars.get(self.index).copied()
     }
-    pub fn next(&mut self) -> Option<&char> {
-        let c = self._chars.get(self.index);
+    pub fn next(&mut self) -> Option<char> {
+        let c = self._chars.get(self.index).copied();
         self.index += 1;
         c
-    }
-    pub fn skip_whitespace(&mut self) {
-        while let Some(c) = self.peek() {
-            if c.is_whitespace() {
-                self.index += 1;
-            }
-        }
     }
 }

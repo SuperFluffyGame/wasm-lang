@@ -27,10 +27,7 @@ fn main() {
 
     let input = "let a = 2.1;";
     let mut lexer = Lexer::new(input);
-    let toks = lexer.lex();
 
-    println!("{:?}", toks);
-    println!("{:?}", lexer.errors);
-    let parser = Parser::new(&toks);
+    let _parser = Parser::new(&lexer);
     // let program = parser.parse();
 }

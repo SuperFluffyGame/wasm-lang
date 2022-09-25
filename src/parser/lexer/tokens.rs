@@ -1,5 +1,5 @@
 #[allow(dead_code)]
-#[derive(Debug)]
+#[derive(Debug, Clone)]
 pub enum TokenType {
     IntLiteral(i64),
     FloatLiteral(f64),
@@ -19,12 +19,14 @@ pub enum TokenType {
     RParen,
     LBrace,
     RBrace,
+
+    EOF,
 }
-#[derive(Debug)]
+#[derive(Debug, Clone)]
 pub struct Token {
-    t: TokenType,
-    line: i32,
-    col: i32,
+    pub t: TokenType,
+    pub line: i32,
+    pub col: i32,
 }
 impl Token {
     pub fn new(t: TokenType, line: i32, col: i32) -> Self {

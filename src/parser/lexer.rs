@@ -1,3 +1,5 @@
+use super::{char_reader::CharReader, Token};
+
 mod lex;
 pub mod tokens;
 
@@ -7,26 +9,30 @@ pub enum LexerErrorType {
 }
 #[derive(Debug)]
 pub struct LexerError {
-    t: LexerErrorType,
-    line: i32,
-    col: i32,
+    pub t: LexerErrorType,
+    pub line: i32,
+    pub col: i32,
 }
 pub struct Lexer<'a> {
-    pub index: i32,
-    pub col: i32,
-    pub line: i32,
-    pub input: &'a str,
+    index: i32,
+    col: i32,
+    line: i32,
+    reader: CharReader<'a>,
+    next: Option<Token>,
     pub errors: Vec<LexerError>,
 }
 impl<'a> Lexer<'a> {
     pub fn new(input: &'a str) -> Self {
-        Self {
+        let mut s = Self {
             index: 0,
             col: 0,
             line: 0,
-            input,
+            reader: CharReader::new(input),
+            next: None,
             errors: Vec::new(),
-        }
+        };
+        s._next();
+        s
     }
     pub fn error(&mut self, t: LexerErrorType) {
         self.errors.push(LexerError {

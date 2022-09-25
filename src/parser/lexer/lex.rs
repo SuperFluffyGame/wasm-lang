@@ -1,13 +1,10 @@
-use std::{iter::Peekable, str::Chars};
-
 use super::{super::Token, super::TokenType, Lexer, LexerErrorType};
 
 impl<'a> Lexer<'a> {
-    pub fn lex(&mut self) -> Vec<Token> {
-        let mut tokens = Vec::new();
-        let mut chars = self.input.chars().peekable();
+    pub(crate) fn _next(&mut self) -> Option<Token> {
+        let next = self.next.clone();
 
-        while let Some(char) = chars.next() {
+        while let Some(char) = self.reader.next() {
             self.col += 1;
             let start_col = self.col;
             let start_line = self.line;
@@ -21,11 +18,11 @@ impl<'a> Lexer<'a> {
                 _ => {
                     // ident / kw
                     if char.is_alphabetic() || char == '_' {
-                        self.ident(char, &mut chars)
+                        self.ident(char)
                     }
                     // number
                     else if char.is_numeric() || char == '.' {
-                        self.number(char, &mut chars)
+                        self.number(char)
                     }
                     // whitespace
                     else if char.is_whitespace() {
@@ -42,18 +39,23 @@ impl<'a> Lexer<'a> {
                     }
                 }
             };
-            tokens.push(Token::new(t, start_line, start_col))
+            self.next = Some(Token::new(t, start_line, start_col));
+            break;
         }
-
-        tokens
+        next
     }
-
-    fn ident(&mut self, initial_char: char, chars: &mut Peekable<Chars>) -> TokenType {
+    pub fn next(&mut self) -> Token {
+        self._next().unwrap()
+    }
+    pub fn peek(&self) -> &Token {
+        self.next.as_ref().unwrap()
+    }
+    fn ident(&mut self, initial_char: char) -> TokenType {
         let mut ident = String::from(initial_char);
-        while let Some(ident_char) = chars.peek() {
-            if ident_char.is_alphanumeric() || ident_char == &'_' {
+        while let Some(ident_char) = self.reader.peek() {
+            if ident_char.is_alphanumeric() || ident_char == '_' {
                 self.col += 1;
-                ident.push(chars.next().unwrap());
+                ident.push(self.reader.next().unwrap());
             } else {
                 break;
             }
@@ -64,13 +66,13 @@ impl<'a> Lexer<'a> {
             TokenType::Ident(ident)
         }
     }
-    fn number(&mut self, initial_char: char, chars: &mut Peekable<Chars>) -> TokenType {
+    fn number(&mut self, initial_char: char) -> TokenType {
         if initial_char == '.' {
             let mut float_str = String::from(initial_char);
-            while let Some(float_char) = chars.peek() {
+            while let Some(float_char) = self.reader.peek() {
                 if float_char.is_numeric() {
                     self.col += 1;
-                    float_str.push(chars.next().unwrap());
+                    float_str.push(self.reader.next().unwrap());
                 } else {
                     break;
                 }
@@ -78,22 +80,22 @@ impl<'a> Lexer<'a> {
             return TokenType::FloatLiteral(float_str.parse().unwrap());
         } else {
             let mut num_str = String::from(initial_char);
-            while let Some(before_decimal_char) = chars.peek() {
+            while let Some(before_decimal_char) = self.reader.peek() {
                 if before_decimal_char.is_numeric() {
                     self.col += 1;
-                    num_str.push(chars.next().unwrap())
+                    num_str.push(self.reader.next().unwrap())
                 } else {
                     break;
                 }
             }
 
-            if let Some('.') = chars.peek() {
+            if let Some('.') = self.reader.peek() {
                 self.col += 1;
-                num_str.push(chars.next().unwrap());
-                while let Some(after_decimal_char) = chars.peek() {
+                num_str.push(self.reader.next().unwrap());
+                while let Some(after_decimal_char) = self.reader.peek() {
                     if after_decimal_char.is_numeric() {
                         self.col += 1;
-                        num_str.push(chars.next().unwrap())
+                        num_str.push(self.reader.next().unwrap())
                     } else {
                         break;
                     }
