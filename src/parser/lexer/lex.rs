@@ -1,6 +1,6 @@
 use super::{super::Token, super::TokenType, Lexer, LexerErrorType};
 
-impl<'a> Lexer<'a> {
+impl Lexer {
     pub(crate) fn _next(&mut self) -> Option<Token> {
         let next = self.next.clone();
 

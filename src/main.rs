@@ -28,6 +28,6 @@ fn main() {
     let input = "let a = 2.1;";
     let mut lexer = Lexer::new(input);
 
-    let _parser = Parser::new(&lexer);
+    let _parser = Parser::new(&mut lexer);
     // let program = parser.parse();
 }

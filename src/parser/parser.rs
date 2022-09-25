@@ -1,24 +1,24 @@
 mod parse;
 pub mod tree;
-
 use super::{Lexer, Token};
+
+#[derive(Debug)]
 pub enum ParserErrorType {
     ExpectedButGot(Token, Token),
 }
+#[derive(Debug)]
 pub struct ParserError {
     t: ParserErrorType,
     line: i32,
     col: i32,
 }
 pub struct Parser<'a> {
-    index: i32,
-    lexer: &'a Lexer<'a>,
+    lexer: &'a mut Lexer,
     errors: Vec<ParserError>,
 }
 impl<'a> Parser<'a> {
-    pub fn new(lexer: &'a Lexer<'a>) -> Self {
+    pub fn new(lexer: &'a mut Lexer) -> Self {
         Self {
-            index: 0,
             lexer,
             errors: Vec::new(),
         }

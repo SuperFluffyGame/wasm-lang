@@ -1,15 +1,11 @@
-use std::str::Chars;
-
-pub struct CharReader<'a> {
-    input: &'a str,
+pub struct CharReader {
     index: usize,
     _chars: Vec<char>,
 }
 
-impl<'a> CharReader<'a> {
-    pub fn new(s: &'a str) -> Self {
+impl CharReader {
+    pub fn new(s: &str) -> Self {
         Self {
-            input: s,
             index: 0,
             _chars: s.chars().collect(),
         }

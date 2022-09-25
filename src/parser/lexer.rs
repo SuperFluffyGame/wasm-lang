@@ -13,18 +13,16 @@ pub struct LexerError {
     pub line: i32,
     pub col: i32,
 }
-pub struct Lexer<'a> {
-    index: i32,
+pub struct Lexer {
     col: i32,
     line: i32,
-    reader: CharReader<'a>,
+    reader: CharReader,
     next: Option<Token>,
     pub errors: Vec<LexerError>,
 }
-impl<'a> Lexer<'a> {
-    pub fn new(input: &'a str) -> Self {
+impl Lexer {
+    pub fn new(input: &str) -> Self {
         let mut s = Self {
-            index: 0,
             col: 0,
             line: 0,
             reader: CharReader::new(input),
