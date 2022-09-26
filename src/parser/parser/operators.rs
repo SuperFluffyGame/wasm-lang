@@ -1,12 +1,6 @@
-use crate::parser::ExprType;
-use crate::parser::Token;
+use crate::parser_error;
 
-use super::tree::Expr;
-use super::ParserError;
-use super::ParserErrorType;
-
-use super::Parser;
-use super::TokenType;
+use super::{super::ExprType, tree::Expr, Parser, ParserError, ParserErrorType, TokenType};
 
 macro_rules! binary_expr {
     // left associative
@@ -48,7 +42,7 @@ macro_rules! unary_expr {
 }
 
 impl<'a> Parser<'a> {
-    pub(crate) fn expr(&mut self) -> Expr {
+    pub(super) fn expr(&mut self) -> Expr {
         self.add_expr()
     }
     binary_expr!(add_expr, mul_expr,   [Plus     => Add, Minus => Sub]);
@@ -56,7 +50,11 @@ impl<'a> Parser<'a> {
     unary_expr!(primary_expr, [Minus => Neg]);
     // binary_expr!(exp_expr, primary_expr, [])
 
-    const PRIMARY_EXPR_EXPECTS: &'static [TokenType] = &[TokenType::IntLiteral(0)];
+    const PRIMARY_EXPR_EXPECTS: &'static [TokenType] = &[
+        TokenType::IntLiteral(0),
+        TokenType::FloatLiteral(0f64),
+        TokenType::LParen,
+    ];
     fn primary_expr(&mut self) -> Expr {
         let tok = self.lexer.next();
         match tok.t {
@@ -68,24 +66,11 @@ impl<'a> Parser<'a> {
                     self.lexer.next();
                     e
                 } else {
-                    self.error(ParserError {
-                        t: ParserErrorType::ExpectedButGot(vec![TokenType::RParen], tok.t.clone()),
-                        line: tok.line,
-                        col: tok.col,
-                    });
-                    Expr::new(ExprType::Error, tok.line, tok.col)
+                    parser_error!(E; self, tok, vec![TokenType::RParen])
                 }
             }
             _ => {
-                self.error(ParserError {
-                    t: ParserErrorType::ExpectedButGot(
-                        Self::PRIMARY_EXPR_EXPECTS.to_vec(),
-                        tok.t.clone(),
-                    ),
-                    line: tok.line,
-                    col: tok.col,
-                });
-                Expr::new(ExprType::Error, tok.line, tok.col)
+                parser_error!(E; self, tok, Self::PRIMARY_EXPR_EXPECTS.to_vec())
             }
         }
     }

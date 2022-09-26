@@ -2,6 +2,8 @@ pub type Program = Vec<Stmt>;
 
 #[derive(Debug)]
 pub enum StmtType {
+    Error,
+
     FnDecl(
         // name
         Expr,
