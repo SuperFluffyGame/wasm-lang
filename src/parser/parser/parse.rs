@@ -1,9 +1,6 @@
 use crate::parser::TokenType;
 
-use super::{
-    tree::{Program, Stmt},
-    Parser,
-};
+use super::{tree::Program, Parser};
 
 impl<'a> Parser<'a> {
     pub fn parse(&mut self) -> Program {

@@ -1,5 +1,3 @@
-use std::io::BufRead;
-
 use crate::parser::ExprType;
 
 use super::tree::Expr;

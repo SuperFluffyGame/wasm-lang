@@ -38,22 +38,30 @@ pub enum ExprType {
     FnCall(String, Vec<Expr>),
 }
 
-#[derive(Debug)]
 pub struct Stmt {
     pub t: StmtType,
     pub line: i32,
     pub col: i32,
+}
+impl std::fmt::Debug for Stmt {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        write!(f, "{}:{}:Stmt->{:?}", self.line, self.col, self.t)
+    }
 }
 impl Stmt {
     pub fn new(t: StmtType, line: i32, col: i32) -> Self {
         Self { t, line, col }
     }
 }
-#[derive(Debug)]
 pub struct Expr {
     pub t: ExprType,
     pub line: i32,
     pub col: i32,
+}
+impl std::fmt::Debug for Expr {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        write!(f, "{}:{}:Expr->{:?}", self.line, self.col, self.t)
+    }
 }
 impl Expr {
     pub fn new(t: ExprType, line: i32, col: i32) -> Self {

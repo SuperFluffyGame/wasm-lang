@@ -1,5 +1,5 @@
 use super::Parser;
-use crate::parser::{Stmt, StmtType, TokenType};
+use crate::parser::{Stmt, StmtType};
 
 impl<'a> Parser<'a> {
     // fn let_stmt(&mut self) -> Stmt {

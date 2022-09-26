@@ -1,8 +1,8 @@
 mod operators;
-mod stmts;
 mod parse;
+mod stmts;
 pub mod tree;
-use super::{Lexer, Token, TokenType};
+use super::{Lexer, TokenType};
 
 #[derive(Debug)]
 pub enum ParserErrorType {
