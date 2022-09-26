@@ -4,7 +4,7 @@ use wasm_lang::{
         types::{I32instr, ValueType, VarInstr},
         Module,
     },
-    parser::{Lexer, Parser},
+    parser::{Lexer, Parser, TokenType},
 };
 fn main() {
     println!("Hello, world!");
@@ -25,9 +25,19 @@ fn main() {
 
     println!("{:02X?}", module.export_bytes());
 
-    let input = "let a = 2.1;";
+    let input = "1 * 2 + 3";
     let mut lexer = Lexer::new(input);
 
-    let _parser = Parser::new(&mut lexer);
-    // let program = parser.parse();
+    // loop {
+    //     println!("{:?}", lexer.peek());
+    //     if let TokenType::EOF = lexer.peek().t {
+    //         std::process::exit(1)
+    //     }
+    //     lexer.next();
+    // }
+
+    let mut parser = Parser::new(&mut lexer);
+    let program = parser.parse();
+
+    println!("{:?}", program);
 }

@@ -1,10 +1,11 @@
+mod operators;
 mod parse;
 pub mod tree;
-use super::{Lexer, Token};
+use super::{Lexer, Token, TokenType};
 
 #[derive(Debug)]
 pub enum ParserErrorType {
-    ExpectedButGot(Token, Token),
+    ExpectedButGot(Vec<TokenType>, TokenType),
 }
 #[derive(Debug)]
 pub struct ParserError {

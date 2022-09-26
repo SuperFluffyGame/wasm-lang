@@ -4,6 +4,15 @@ impl Lexer {
     pub(crate) fn _next(&mut self) -> Option<Token> {
         let next = self.next.clone();
 
+        if let None = self.reader.peek() {
+            self.next = Some(Token {
+                t: TokenType::EOF,
+                line: self.line,
+                col: self.col + 1,
+            });
+            return next;
+        }
+
         while let Some(char) = self.reader.next() {
             self.col += 1;
             let start_col = self.col;

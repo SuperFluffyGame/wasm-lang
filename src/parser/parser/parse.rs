@@ -1,15 +1,20 @@
 use crate::parser::TokenType;
 
-use super::{tree::Program, Parser, ParserError};
+use super::{
+    tree::{Program, Stmt},
+    Parser,
+};
 
 impl<'a> Parser<'a> {
-    pub fn parse(&self) -> Result<Program, ParserError> {
-        let out_stmts = Vec::new();
+    pub fn parse(&mut self) -> Program {
+        let mut out_stmts = Vec::new();
 
         loop {
+            // println!("{:?}", self.lexer.peek().t);
             if let TokenType::EOF = self.lexer.peek().t {
-                return Ok(out_stmts);
+                return out_stmts;
             }
+            out_stmts.push(Stmt::Expr(self.expr()))
         }
     }
 }

@@ -1,5 +1,6 @@
 pub type Program = Vec<Stmt>;
 
+#[derive(Debug)]
 pub enum Stmt {
     FnDecl(
         // name
@@ -20,7 +21,10 @@ pub enum Stmt {
     Expr(Expr),
 }
 
+#[derive(Debug)]
 pub enum Expr {
+    Error,
+
     Ident(String),
     Type(String),
     Int(i64),
@@ -29,6 +33,7 @@ pub enum Expr {
     Sub(Box<Expr>, Box<Expr>),
     Mul(Box<Expr>, Box<Expr>),
     Div(Box<Expr>, Box<Expr>),
+    Neg(Box<Expr>),
 
     FnCall(String, Vec<Expr>),
 }
