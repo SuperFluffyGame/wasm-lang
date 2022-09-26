@@ -25,7 +25,7 @@ fn main() {
 
     println!("{:02X?}", module.export_bytes());
 
-    let input = "1 * 2 + 3";
+    let input = "1 + 2& 1 +* 2";
     let mut lexer = Lexer::new(input);
 
     // loop {
@@ -39,5 +39,7 @@ fn main() {
     let mut parser = Parser::new(&mut lexer);
     let program = parser.parse();
 
-    println!("{:?}", program);
+    println!("PROGRAM: {:?}", program);
+    println!("PARSE ERRORS: {:?}", parser.errors);
+    println!("LEXER ERRORS: {:?}", lexer.errors);
 }

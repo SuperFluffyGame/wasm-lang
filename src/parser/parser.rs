@@ -15,7 +15,7 @@ pub struct ParserError {
 }
 pub struct Parser<'a> {
     lexer: &'a mut Lexer,
-    errors: Vec<ParserError>,
+    pub errors: Vec<ParserError>,
 }
 impl<'a> Parser<'a> {
     pub fn new(lexer: &'a mut Lexer) -> Self {
