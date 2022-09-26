@@ -1,0 +1,9 @@
+primary_expr := FLOAT | INT;
+unary_expr := primary_expr | "-" primary_expr;
+mul_expr := unary_expr ("*" | "/") unary_expr;
+add_expr := mul_expr ("+" | "-") mul_expr;
+expr := add_expr;
+
+let_stmt := KW_LET IDENT "=" expr ";";
+stmt := let_stmt;
+program := (let_stmt)*

@@ -1,7 +1,7 @@
 pub type Program = Vec<Stmt>;
 
 #[derive(Debug)]
-pub enum Stmt {
+pub enum StmtType {
     FnDecl(
         // name
         Expr,
@@ -22,7 +22,7 @@ pub enum Stmt {
 }
 
 #[derive(Debug)]
-pub enum Expr {
+pub enum ExprType {
     Error,
 
     Ident(String),
@@ -36,4 +36,27 @@ pub enum Expr {
     Neg(Box<Expr>),
 
     FnCall(String, Vec<Expr>),
+}
+
+#[derive(Debug)]
+pub struct Stmt {
+    pub t: StmtType,
+    pub line: i32,
+    pub col: i32,
+}
+impl Stmt {
+    pub fn new(t: StmtType, line: i32, col: i32) -> Self {
+        Self { t, line, col }
+    }
+}
+#[derive(Debug)]
+pub struct Expr {
+    pub t: ExprType,
+    pub line: i32,
+    pub col: i32,
+}
+impl Expr {
+    pub fn new(t: ExprType, line: i32, col: i32) -> Self {
+        Self { t, line, col }
+    }
 }

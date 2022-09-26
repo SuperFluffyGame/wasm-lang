@@ -1,3 +1,7 @@
+use std::io::BufRead;
+
+use crate::parser::ExprType;
+
 use super::tree::Expr;
 use super::ParserError;
 use super::ParserErrorType;
@@ -15,7 +19,9 @@ macro_rules! binary_expr {
                     if let TokenType::$token = self.lexer.peek().t {
                         self.lexer.next();
                         let b = self.$higher_prec_op();
-                        a = Expr::$expr(Box::new(a), Box::new(b));
+                        let line = a.line;
+                        let col = a.col;
+                        a = Expr::new(ExprType::$expr(Box::new(a), Box::new(b)), line, col);
                         continue;
                     }
                 )*
@@ -32,8 +38,8 @@ macro_rules! unary_expr {
         fn unary_expr(&mut self) -> Expr {
             $(
                 if let TokenType::$token = self.lexer.peek().t {
-                    self.lexer.next();
-                    return Expr::$expr(Box::new(self.$higher_prec_op()))
+                    let tok = self.lexer.next();
+                    return Expr::new(ExprType::$expr(Box::new(self.$higher_prec_op())), tok.line, tok.col)
                 }
             )*
 
@@ -55,7 +61,8 @@ impl<'a> Parser<'a> {
     fn primary_expr(&mut self) -> Expr {
         let tok = self.lexer.next();
         match tok.t {
-            TokenType::IntLiteral(i) => Expr::Int(i),
+            TokenType::IntLiteral(i) => Expr::new(ExprType::Int(i), tok.line, tok.col),
+            TokenType::FloatLiteral(f) => Expr::new(ExprType::Float(f), tok.line, tok.col),
             _ => {
                 self.error(ParserError {
                     t: ParserErrorType::ExpectedButGot(
@@ -65,7 +72,7 @@ impl<'a> Parser<'a> {
                     line: tok.line,
                     col: tok.col,
                 });
-                Expr::Error
+                Expr::new(ExprType::Error, tok.line, tok.col)
             }
         }
     }

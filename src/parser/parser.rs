@@ -1,4 +1,5 @@
 mod operators;
+mod stmts;
 mod parse;
 pub mod tree;
 use super::{Lexer, Token, TokenType};

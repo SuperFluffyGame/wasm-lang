@@ -14,7 +14,8 @@ impl<'a> Parser<'a> {
             if let TokenType::EOF = self.lexer.peek().t {
                 return out_stmts;
             }
-            out_stmts.push(Stmt::Expr(self.expr()))
+            let s = self.stmt();
+            out_stmts.push(s)
         }
     }
 }
