@@ -1,4 +1,6 @@
-use super::{super::Token, super::TokenType, Lexer, LexerErrorType};
+use crate::parser::TokenType;
+
+use super::{super::Token, Lexer, LexerErrorType};
 
 impl Lexer {
     pub(crate) fn _next(&mut self) -> Option<Token> {
@@ -23,6 +25,8 @@ impl Lexer {
                 '*' => TokenType::Asterisk,
                 '=' => TokenType::Equal,
                 ';' => TokenType::Semi,
+                '(' => TokenType::LParen,
+                ')' => TokenType::RParen,
 
                 _ => {
                     // ident / kw

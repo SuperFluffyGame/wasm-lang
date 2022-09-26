@@ -1,4 +1,4 @@
-primary_expr := FLOAT | INT;
+primary_expr := FLOAT | INT | "(" expr ")";
 unary_expr := primary_expr | "-" primary_expr;
 mul_expr := unary_expr ("*" | "/") unary_expr;
 add_expr := mul_expr ("+" | "-") mul_expr;

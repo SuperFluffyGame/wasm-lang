@@ -25,7 +25,7 @@ fn main() {
 
     println!("{:02X?}", module.export_bytes());
 
-    let input = "1 + 2";
+    let input = "(1 + 2) * 3";
     let mut lexer = Lexer::new(input);
 
     // loop {

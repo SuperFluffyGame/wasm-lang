@@ -1,4 +1,5 @@
 use crate::parser::ExprType;
+use crate::parser::Token;
 
 use super::tree::Expr;
 use super::ParserError;
@@ -61,6 +62,20 @@ impl<'a> Parser<'a> {
         match tok.t {
             TokenType::IntLiteral(i) => Expr::new(ExprType::Int(i), tok.line, tok.col),
             TokenType::FloatLiteral(f) => Expr::new(ExprType::Float(f), tok.line, tok.col),
+            TokenType::LParen => {
+                let e = self.expr();
+                if let TokenType::RParen = self.lexer.peek().t {
+                    self.lexer.next();
+                    e
+                } else {
+                    self.error(ParserError {
+                        t: ParserErrorType::ExpectedButGot(vec![TokenType::RParen], tok.t.clone()),
+                        line: tok.line,
+                        col: tok.col,
+                    });
+                    Expr::new(ExprType::Error, tok.line, tok.col)
+                }
+            }
             _ => {
                 self.error(ParserError {
                     t: ParserErrorType::ExpectedButGot(
