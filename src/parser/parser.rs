@@ -55,16 +55,62 @@ macro_rules! parser_error {
 }
 
 #[macro_export]
-macro_rules! match_tok {
-    (S; $self:ident, $($tok:ident $pat:pat => $then:expr),*) => {
+macro_rules! match_tok_stmt {
+    // unit variant
+    ($self:ident, [$($tok:ident => $then:expr),*]) => {
         {
             let tok = $self.lexer.next();
             match tok.t {
                 $(
                 crate::parser::lexer::tokens::TokenType::$tok => $then,
                 )*
-                _ => parser_error!(S; $self, tok, vec![
+                _ => crate::parser_error!(S; $self, tok, vec![
                     $(crate::parser::lexer::tokens::TokenType::$tok,)*
+                ])
+            }
+        }
+    };
+    // unit variant with named tok var
+    ($self:ident, $tok_var:ident, [$($tok:ident => $then:expr),*]) => {
+        {
+            let $tok_var = $self.lexer.next();
+            match $tok_var.t {
+                $(
+                crate::parser::lexer::tokens::TokenType::$tok => $then,
+                )*
+                _ => crate::parser_error!(S; $self, $tok_var, vec![
+                    $(crate::parser::lexer::tokens::TokenType::$tok,)*
+                ])
+            }
+        }
+    };
+    // tuple variant
+    ($self:ident, [$($expect:expr; $pat:pat => $then:expr),*]) => {
+        {
+            use crate::parser::lexer::tokens::TokenType::*;
+            let tok = $self.lexer.next();
+            match tok.t {
+                $(
+                $pat => $then,
+                )*
+                _ => crate::parser_error!(S; $self, tok, vec![
+                    $($expect,)*
+                ])
+            }
+        }
+    };
+
+    // tuple variant with named token var
+    ($self:ident, $tok_var:ident, [$($expect:expr; $pat:pat => $then:expr),*]) => {
+        {
+            use crate::parser::lexer::tokens::TokenType::*;
+            let $tok_var = $self.lexer.next();
+            match $tok_var.t {
+                $(
+                $pat => $then,
+                )*
+                _ => crate::parser_error!(S; $self, $tok_var, vec![
+                    $($expect,)*
                 ])
             }
         }

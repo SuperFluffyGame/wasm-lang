@@ -1,6 +1,6 @@
 use crate::parser_error;
 
-use super::{super::ExprType, tree::Expr, Parser, ParserError, ParserErrorType, TokenType};
+use super::{super::ExprType, tree::Expr, Parser, TokenType};
 
 macro_rules! binary_expr {
     // left associative
