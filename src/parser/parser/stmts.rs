@@ -7,10 +7,10 @@ use crate::{
 impl<'a> Parser<'a> {
     fn let_stmt(&mut self) -> Stmt {
         match_tok!(S; self, kw_let_tok, [KwLet => {
-        match_tok!(S; self, [Ident(String::new()); Ident(i) =>
-        match_tok!(S; self, [Equal => {
+        match_tok!(S; self, tok, [Ident(String::new()); Ident(i) =>
+        match_tok!(S; self, tok, [Equal => {
             let expr = self.expr();
-            match_tok!(S; self, [Semi =>
+            match_tok!(S; self, tok, [Semi =>
                 Stmt::new(StmtType::Let(i, expr), kw_let_tok.line, kw_let_tok.col)
             ])
         }])])}])

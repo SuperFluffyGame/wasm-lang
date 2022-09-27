@@ -1,4 +1,4 @@
-use crate::parser_error;
+use crate::{match_tok, node};
 
 use super::{super::ExprType, tree::Expr, Parser, TokenType};
 
@@ -50,28 +50,17 @@ impl<'a> Parser<'a> {
     unary_expr!(primary_expr, [Minus => Neg]);
     // binary_expr!(exp_expr, primary_expr, [])
 
-    const PRIMARY_EXPR_EXPECTS: &'static [TokenType] = &[
-        TokenType::IntLiteral(0),
-        TokenType::FloatLiteral(0f64),
-        TokenType::LParen,
-    ];
     fn primary_expr(&mut self) -> Expr {
-        let tok = self.lexer.next();
-        match tok.t {
-            TokenType::IntLiteral(i) => Expr::new(ExprType::Int(i), tok.line, tok.col),
-            TokenType::FloatLiteral(f) => Expr::new(ExprType::Float(f), tok.line, tok.col),
-            TokenType::LParen => {
+        match_tok!(E; self, tok, [
+            IntLiteral(0); IntLiteral(i) => node!(E; tok, Int(i)),
+            FloatLiteral(0.0); FloatLiteral(f) => node!(E; tok, Float(f)),
+            LParen; LParen => {
                 let e = self.expr();
-                if let TokenType::RParen = self.lexer.peek().t {
-                    self.lexer.next();
+                match_tok!(E; self, tok, [RParen => {
                     e
-                } else {
-                    parser_error!(E; self, tok, vec![TokenType::RParen])
-                }
-            }
-            _ => {
-                parser_error!(E; self, tok, Self::PRIMARY_EXPR_EXPECTS.to_vec())
-            }
-        }
+                }])
+            },
+            Ident(String::new()); Ident(s) => node!(E; tok, Ident(s))
+        ])
     }
 }

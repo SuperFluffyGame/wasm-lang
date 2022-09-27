@@ -60,17 +60,9 @@ macro_rules! parser_error {
 
 #[macro_export]
 macro_rules! match_tok {
-    // unit variant
-    ($type:ident; $self:ident, [$($tok:ident => $then:expr),*]) => {
-        match_tok!($type; $self, tok, [$($tok; $tok => $then)*])
-    };
     // unit variant with named tok var
     ($type:ident; $self:ident, $tok_var:ident, [$($tok:ident => $then:expr),*]) => {
-        match_tok!($type; $self, $tok_var, [$($tok; $tok => $then)*])
-    };
-    // tuple variant
-    ($type:ident; $self:ident, [$($expect:expr; $pat:pat => $then:expr),*]) => {
-        match_tok!($type; $self, tok, [$($expect; $pat => $then)*])
+        match_tok!($type; $self, $tok_var, [$($tok; $tok => $then),*])
     };
 
     // tuple variant with named token var
@@ -83,9 +75,21 @@ macro_rules! match_tok {
                 $pat => $then,
                 )*
                 _ => crate::parser_error!($type; $self, $tok_var, vec![
-                    $($expect,)*
+                    $($expect),*
                 ])
             }
         }
     };
+}
+
+#[macro_export]
+macro_rules! node {
+    (S; $tok:ident, $type:expr) => {{
+        use crate::parser::parser::tree::StmtType::*;
+        crate::parser::parser::tree::Stmt::new($type, $tok.line, $tok.col)
+    }};
+    (E; $tok:ident, $type:expr) => {{
+        use crate::parser::parser::tree::ExprType::*;
+        crate::parser::parser::tree::Expr::new($type, $tok.line, $tok.col)
+    }};
 }

@@ -28,7 +28,6 @@ pub enum ExprType {
     Error,
 
     Ident(String),
-    Type(String),
     Int(i64),
     Float(f64),
     Add(Box<Expr>, Box<Expr>),
@@ -51,7 +50,7 @@ impl std::fmt::Debug for Stmt {
     }
 }
 impl Stmt {
-    pub fn new(t: StmtType, line: i32, col: i32) -> Self {
+    pub const fn new(t: StmtType, line: i32, col: i32) -> Self {
         Self { t, line, col }
     }
 }
@@ -66,7 +65,7 @@ impl std::fmt::Debug for Expr {
     }
 }
 impl Expr {
-    pub fn new(t: ExprType, line: i32, col: i32) -> Self {
+    pub const fn new(t: ExprType, line: i32, col: i32) -> Self {
         Self { t, line, col }
     }
 }

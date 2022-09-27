@@ -22,6 +22,7 @@ pub enum TokenType {
 
     EOF,
 }
+
 #[derive(Debug, Clone)]
 pub struct Token {
     pub t: TokenType,
@@ -29,7 +30,7 @@ pub struct Token {
     pub col: i32,
 }
 impl Token {
-    pub fn new(t: TokenType, line: i32, col: i32) -> Self {
+    pub const fn new(t: TokenType, line: i32, col: i32) -> Self {
         Self { t, line, col }
     }
 }
