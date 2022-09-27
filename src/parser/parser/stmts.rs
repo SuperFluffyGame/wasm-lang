@@ -1,16 +1,16 @@
 use super::Parser;
 use crate::{
-    match_tok_stmt,
+    match_tok,
     parser::{Stmt, StmtType, TokenType},
 };
 
 impl<'a> Parser<'a> {
     fn let_stmt(&mut self) -> Stmt {
-        match_tok_stmt!(self, kw_let_tok, [KwLet => {
-        match_tok_stmt!(self, [Ident(String::new()); Ident(i) =>
-        match_tok_stmt!(self, [Equal => {
+        match_tok!(S; self, kw_let_tok, [KwLet => {
+        match_tok!(S; self, [Ident(String::new()); Ident(i) =>
+        match_tok!(S; self, [Equal => {
             let expr = self.expr();
-            match_tok_stmt!(self, [Semi =>
+            match_tok!(S; self, [Semi =>
                 Stmt::new(StmtType::Let(i, expr), kw_let_tok.line, kw_let_tok.col)
             ])
         }])])}])

@@ -38,7 +38,11 @@ macro_rules! parser_error {
             line: $tok.line,
             col: $tok.col,
         });
-        Expr::new(ExprType::Error, $tok.line, $tok.col)
+        crate::parser::parser::tree::Expr::new(
+            crate::parser::parser::tree::ExprType::Error,
+            $tok.line,
+            $tok.col,
+        )
     }};
     (S; $self:ident, $tok:ident, $expects:expr) => {{
         $self.error(crate::parser::parser::ParserError {
@@ -55,53 +59,22 @@ macro_rules! parser_error {
 }
 
 #[macro_export]
-macro_rules! match_tok_stmt {
+macro_rules! match_tok {
     // unit variant
-    ($self:ident, [$($tok:ident => $then:expr),*]) => {
-        {
-            let tok = $self.lexer.next();
-            match tok.t {
-                $(
-                crate::parser::lexer::tokens::TokenType::$tok => $then,
-                )*
-                _ => crate::parser_error!(S; $self, tok, vec![
-                    $(crate::parser::lexer::tokens::TokenType::$tok,)*
-                ])
-            }
-        }
+    ($type:ident; $self:ident, [$($tok:ident => $then:expr),*]) => {
+        match_tok!($type; $self, tok, [$($tok; $tok => $then)*])
     };
     // unit variant with named tok var
-    ($self:ident, $tok_var:ident, [$($tok:ident => $then:expr),*]) => {
-        {
-            let $tok_var = $self.lexer.next();
-            match $tok_var.t {
-                $(
-                crate::parser::lexer::tokens::TokenType::$tok => $then,
-                )*
-                _ => crate::parser_error!(S; $self, $tok_var, vec![
-                    $(crate::parser::lexer::tokens::TokenType::$tok,)*
-                ])
-            }
-        }
+    ($type:ident; $self:ident, $tok_var:ident, [$($tok:ident => $then:expr),*]) => {
+        match_tok!($type; $self, $tok_var, [$($tok; $tok => $then)*])
     };
     // tuple variant
-    ($self:ident, [$($expect:expr; $pat:pat => $then:expr),*]) => {
-        {
-            use crate::parser::lexer::tokens::TokenType::*;
-            let tok = $self.lexer.next();
-            match tok.t {
-                $(
-                $pat => $then,
-                )*
-                _ => crate::parser_error!(S; $self, tok, vec![
-                    $($expect,)*
-                ])
-            }
-        }
+    ($type:ident; $self:ident, [$($expect:expr; $pat:pat => $then:expr),*]) => {
+        match_tok!($type; $self, tok, [$($expect; $pat => $then)*])
     };
 
     // tuple variant with named token var
-    ($self:ident, $tok_var:ident, [$($expect:expr; $pat:pat => $then:expr),*]) => {
+    ($type:ident; $self:ident, $tok_var:ident, [$($expect:expr; $pat:pat => $then:expr),*]) => {
         {
             use crate::parser::lexer::tokens::TokenType::*;
             let $tok_var = $self.lexer.next();
@@ -109,7 +82,7 @@ macro_rules! match_tok_stmt {
                 $(
                 $pat => $then,
                 )*
-                _ => crate::parser_error!(S; $self, $tok_var, vec![
+                _ => crate::parser_error!($type; $self, $tok_var, vec![
                     $($expect,)*
                 ])
             }
