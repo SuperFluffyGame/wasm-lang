@@ -10,6 +10,7 @@ pub enum TokenType {
     Minus,
     Asterisk,
     Slash,
+    Comma,
     Equal,
     Semi,
     KwLet,
@@ -21,6 +22,7 @@ pub enum TokenType {
     RBrace,
 
     EOF,
+    None,
 }
 
 #[derive(Debug, Clone)]

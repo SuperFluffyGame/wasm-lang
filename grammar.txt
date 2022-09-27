@@ -1,5 +1,8 @@
+expr_list := expr? (,expr)* ","?;
+
 primary_expr := FLOAT | INT | "(" expr ")";
-unary_expr := primary_expr | "-" primary_expr;
+fn_call_expr := primary_expr ("(" expr_list ")")*;
+unary_expr := fn_call_expr | "-" fn_call_expr;
 mul_expr := unary_expr ("*" | "/") unary_expr;
 add_expr := mul_expr ("+" | "-") mul_expr;
 expr := add_expr;

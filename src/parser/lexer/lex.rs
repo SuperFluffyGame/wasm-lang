@@ -3,7 +3,7 @@ use crate::parser::TokenType;
 use super::{super::Token, Lexer, LexerErrorType};
 
 impl Lexer {
-    pub(crate) fn _next(&mut self) -> Option<Token> {
+    pub(super) fn _next(&mut self) -> Option<Token> {
         let next = self.next.clone();
 
         if let None = self.reader.peek() {
@@ -27,6 +27,7 @@ impl Lexer {
                 ';' => TokenType::Semi,
                 '(' => TokenType::LParen,
                 ')' => TokenType::RParen,
+                ',' => TokenType::Comma,
 
                 _ => {
                     // ident / kw

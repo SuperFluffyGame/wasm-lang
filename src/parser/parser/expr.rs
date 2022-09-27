@@ -1,4 +1,4 @@
-use crate::{match_tok, node};
+use crate::{match_tok, match_tok_peek, node};
 
 use super::{super::ExprType, tree::Expr, Parser, TokenType};
 
@@ -41,6 +41,47 @@ macro_rules! unary_expr {
     };
 }
 
+macro_rules! expr_list {
+    ($fn_name:ident, [$($expect:expr; $end_tok:pat),*]) => {
+        fn $fn_name(&mut self) -> Vec<Expr>{
+            let mut exprs = Vec::new();
+            use TokenType::*;
+            match self.lexer.peek().t {
+                $(
+                    $end_tok
+                )|* => {self.lexer.next(); exprs},
+                _ => {
+                    exprs.push(self.expr());
+                    let exprs = loop {
+
+                        exprs.push(
+                            match_tok_peek!(E; self, tok, [
+                            Comma; Comma => {
+                                self.lexer.next();
+                                self.expr()
+                            },
+                            $($expect; $end_tok => {
+                                self.lexer.next();
+                                break exprs;
+                            }),*
+                            ,None; _ => break exprs
+                            ])
+                        );
+                    };
+
+
+                    exprs
+                }
+            }
+        }
+    };
+     ($fn_name:ident, [$($end_tok:ident),*]) => {
+
+            expr_list!($fn_name, [$($end_tok; $end_tok),*]);
+
+     };
+}
+
 impl<'a> Parser<'a> {
     pub(super) fn expr(&mut self) -> Expr {
         self.add_expr()
@@ -49,6 +90,8 @@ impl<'a> Parser<'a> {
     binary_expr!(mul_expr, unary_expr, [Asterisk => Mul, Slash => Div]);
     unary_expr!(primary_expr, [Minus => Neg]);
     // binary_expr!(exp_expr, primary_expr, [])
+
+    expr_list!(fn_args, [RParen]);
 
     fn primary_expr(&mut self) -> Expr {
         match_tok!(E; self, tok, [
@@ -60,7 +103,17 @@ impl<'a> Parser<'a> {
                     e
                 }])
             },
-            Ident(String::new()); Ident(s) => node!(E; tok, Ident(s))
+            Ident(String::new()); Ident(s) => {
+                let next_tok = self.lexer.peek();
+                match next_tok.t {
+                    LParen => {
+                        let rparen_tok = self.lexer.next();
+                        let e_list = self.fn_args();
+                        node!(E; tok, FnCall(s, e_list))
+                    }
+                    _ => node!(E; tok, Ident(s))
+                }
+            }
         ])
     }
 }

@@ -1,4 +1,4 @@
-mod operators;
+mod expr;
 mod parse;
 mod stmts;
 pub mod tree;
@@ -77,6 +77,31 @@ macro_rules! match_tok {
                 _ => crate::parser_error!($type; $self, $tok_var, vec![
                     $($expect),*
                 ])
+            }
+        }
+    };
+}
+#[macro_export]
+macro_rules! match_tok_peek {
+    // unit variant with named tok var
+    ($type:ident; $self:ident, $tok_var:ident, [$($tok:ident => $then:expr),*]) => {
+        match_tok!($type; $self, $tok_var, [$($tok; $tok => $then),*])
+    };
+
+    // tuple variant with named token var
+    ($type:ident; $self:ident, $tok_var:ident, [$($expect:expr; $pat:pat => $then:expr),*]) => {
+        {
+            use crate::parser::lexer::tokens::TokenType::*;
+            let $tok_var = $self.lexer.peek().clone();
+            match $tok_var.t {
+                $(
+                $pat => $then,
+                )*
+                _ => {
+                    println!("{:?}", $tok_var);
+                    crate::parser_error!($type; $self, $tok_var, vec![
+                    $($expect),*
+                ])}
             }
         }
     };
