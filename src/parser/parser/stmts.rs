@@ -14,6 +14,10 @@ impl<'a> Parser<'a> {
         })))
     }
 
+    fn fn_decl_stmt(&mut self) -> Stmt {
+        todo!()
+    }
+
     // const STMT_EXPECTS: &'static [TokenType] = &[];
     pub(super) fn stmt(&mut self) -> Stmt {
         match self.lexer.peek().t {
