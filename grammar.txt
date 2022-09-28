@@ -1,18 +1,18 @@
 
-block_expr   ::= "{" (stmt)* "}";
-expr_list    ::= (expr),*;
-
-primary_expr ::= FLOAT | INT | "(" expr ")" | block_expr;
-fn_call_expr ::= primary_expr ("(" expr_list ")")*;
-unary_expr   ::= fn_call_expr | "-" fn_call_expr;
-mul_expr     ::= unary_expr ("*" | "/") unary_expr;
-add_expr     ::= mul_expr ("+" | "-") mul_expr;
-expr         ::= add_expr;
-
-ident_pair   ::= IDENT (":" IDENT)?;
-param_list   ::= (IDENT),*
-
-let_stmt     ::= KW_LET IDENT "=" expr ";";
-fn_decl_stmt ::= KW_FN IDENT "(" param_list ")" block_expr ";"?;
-stmt         ::= let_stmt;
-program      ::= (stmt)*;
+block_expr    ::=  "{" (stmt)* "}";
+expr_list     ::=  (expr),*;
+  
+primary_expr  ::=  FLOAT | INT | "(" expr ")" | block_expr;
+fn_call_expr  ::=  primary_expr ("(" expr_list ")")*;
+unary_expr    ::=  fn_call_expr | "-" fn_call_expr;
+mul_expr      ::=  unary_expr ("*" | "/") unary_expr;
+add_expr      ::=  mul_expr ("+" | "-") mul_expr;
+expr          ::=  add_expr;
+  
+ident_pair    ::=  IDENT (":" IDENT)?;
+param_list    ::=  (IDENT),*
+  
+let_stmt      ::=  KW_LET IDENT "=" expr ";";
+fn_decl_stmt  ::=  KW_FN IDENT "(" param_list ")" block_expr ";"?;
+stmt          ::=  let_stmt;
+program       ::=  (stmt)*;
