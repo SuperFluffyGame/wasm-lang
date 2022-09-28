@@ -1,19 +1,17 @@
 use super::Parser;
 use crate::{
-    match_tok,
-    parser::{Stmt, StmtType, TokenType},
+    match_tok_single,
+    parser::{parser::expects::Expects, Stmt, StmtType, TokenType},
 };
 
 impl<'a> Parser<'a> {
     fn let_stmt(&mut self) -> Stmt {
-        match_tok!(S; self, ltok, [KwLet => {
-        match_tok!(S; self, tok,  [Ident(String::new()); Ident(i) =>
-        match_tok!(S; self, tok,  [Equal => {
-            let expr = self.expr();
-            match_tok!(S; self, tok, [Semi =>
-                Stmt::new(StmtType::Let(i, expr), ltok.line, ltok.col)
-            ])
-        }])])}])
+        match_tok_single!(S; self; ltok; Expects::Let; KwLet =>
+        match_tok_single!(S; self; tok; Expects::Ident; Ident(i) =>
+        match_tok_single!(S; self; tok; Expects::Equal; Equal =>{
+            let e = self.expr();
+            match_tok_single!(S; self; tok; Expects::Semi; Semi => Stmt::new(StmtType::Let(i, e), ltok.line, ltok.col))
+        })))
     }
 
     // const STMT_EXPECTS: &'static [TokenType] = &[];

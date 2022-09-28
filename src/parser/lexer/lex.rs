@@ -61,7 +61,10 @@ impl Lexer {
     pub fn next(&mut self) -> Token {
         self._next().unwrap()
     }
-    pub fn peek(&self) -> &Token {
+    pub fn peek(&self) -> Token {
+        self.next.clone().unwrap()
+    }
+    pub fn peek_ref(&self) -> &Token {
         self.next.as_ref().unwrap()
     }
     fn ident(&mut self, initial_char: char) -> TokenType {

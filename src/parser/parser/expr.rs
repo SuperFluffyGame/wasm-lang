@@ -1,4 +1,8 @@
-use crate::{match_tok, match_tok_peek, node};
+use crate::{
+    match_tok_single, node,
+    parser::parser::expects::{self, Expects},
+    parser_error,
+};
 
 use super::{super::ExprType, tree::Expr, Parser, TokenType};
 
@@ -41,7 +45,7 @@ macro_rules! unary_expr {
     };
 }
 
-macro_rules! expr_list {
+macro_rules! list {
     ($fn_name:ident, [$($expect:expr; $end_tok:pat),*]) => {
         fn $fn_name(&mut self) -> Vec<Expr>{
             let mut exprs = Vec::new();
@@ -77,7 +81,7 @@ macro_rules! expr_list {
     };
      ($fn_name:ident, [$($end_tok:ident),*]) => {
 
-            expr_list!($fn_name, [$($end_tok; $end_tok),*]);
+            list!($fn_name, [$($end_tok; $end_tok),*]);
 
      };
 }
@@ -91,29 +95,38 @@ impl<'a> Parser<'a> {
     unary_expr!(primary_expr, [Minus => Neg]);
     // binary_expr!(exp_expr, primary_expr, [])
 
-    expr_list!(fn_args, [RParen]);
+    // list!(fn_args, [RParen]);
 
     fn primary_expr(&mut self) -> Expr {
-        match_tok!(E; self, tok, [
-            IntLiteral(0); IntLiteral(i) => node!(E; tok, Int(i)),
-            FloatLiteral(0.0); FloatLiteral(f) => node!(E; tok, Float(f)),
-            LParen; LParen => {
+        use TokenType::*;
+        let tok = self.lexer.next();
+        match tok.t {
+            IntLiteral(i) => {
+                node!(E; tok, Int(i))
+            }
+            FloatLiteral(f) => {
+                node!(E; tok, Float(f))
+            }
+            LParen => {
                 let e = self.expr();
-                match_tok!(E; self, tok, [RParen => {
+                match_tok_single!(E; self; tok; Expects::RParen; RParen => {
                     e
-                }])
-            },
-            Ident(String::new()); Ident(s) => {
+                })
+            }
+            Ident(s) => {
                 let next_tok = self.lexer.peek();
                 match next_tok.t {
-                    LParen => {
-                        let rparen_tok = self.lexer.next();
-                        let e_list = self.fn_args();
-                        node!(E; tok, FnCall(s, e_list))
-                    }
-                    _ => node!(E; tok, Ident(s))
+                    // LParen => {
+                    //     self.lexer.next();
+                    //     let e_list = self.fn_args();
+                    //     node!(E; tok, FnCall(s, e_list))
+                    // }
+                    _ => node!(E; tok, Ident(s)),
                 }
             }
-        ])
+            _ => {
+                parser_error!(E; self, tok, expects::Expects::PrimaryExpr)
+            }
+        }
     }
 }
