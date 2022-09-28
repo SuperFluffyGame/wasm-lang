@@ -1,3 +1,4 @@
+#[allow(unused)]
 #[derive(Debug)]
 pub enum Expects {
     PrimaryExpr,
@@ -6,4 +7,6 @@ pub enum Expects {
     Ident,
     Equal,
     RParen,
+    Comma,
+    Multi(Vec<Expects>),
 }

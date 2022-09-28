@@ -22,7 +22,9 @@ impl<'a> Parser<'a> {
                 let e = self.expr();
                 let line = e.line;
                 let col = e.col;
-                Stmt::new(StmtType::Expr(e), line, col)
+                match_tok_single!(S; self; tok; Expects::Semi; Semi => {
+                    Stmt::new(StmtType::Expr(e), line, col)
+                })
             }
         }
     }

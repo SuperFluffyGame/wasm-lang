@@ -46,37 +46,38 @@ macro_rules! unary_expr {
 }
 
 macro_rules! list {
-    ($fn_name:ident, [$($expect:expr; $end_tok:pat),*]) => {
+    ($fn_name:ident; $end_tok_expect:expr; $end_tok:pat) => {
         fn $fn_name(&mut self) -> Vec<Expr>{
             let mut exprs = Vec::new();
             use TokenType::*;
             match self.lexer.peek().t {
-                $(
-                    $end_tok
-                )|* => {self.lexer.next(); exprs},
+                $end_tok => {self.lexer.next();},
                 _ => {
                     exprs.push(self.expr());
-                    let exprs = loop {
-
-                        exprs.push(
-                            match_tok_peek!(E; self, tok, [
-                            Comma; Comma => {
+                    loop {
+                        match self.lexer.peek().t {
+                            Comma => {
                                 self.lexer.next();
-                                self.expr()
+                                match self.lexer.peek().t {
+                                    $end_tok => {
+                                        self.lexer.next();
+                                        break;
+                                    },
+                                    _ => exprs.push(self.expr())
+                                }
                             },
-                            $($expect; $end_tok => {
+                            $end_tok => {
                                 self.lexer.next();
-                                break exprs;
-                            }),*
-                            ,None; _ => break exprs
-                            ])
-                        );
+                                break;
+                            }
+                            _ => {
+                                self.lexer.next();
+                            }
+                        };
                     };
-
-
-                    exprs
                 }
-            }
+            };
+            exprs
         }
     };
      ($fn_name:ident, [$($end_tok:ident),*]) => {
@@ -95,7 +96,7 @@ impl<'a> Parser<'a> {
     unary_expr!(primary_expr, [Minus => Neg]);
     // binary_expr!(exp_expr, primary_expr, [])
 
-    // list!(fn_args, [RParen]);
+    list!(fn_args; RParen; RParen);
 
     fn primary_expr(&mut self) -> Expr {
         use TokenType::*;
@@ -116,11 +117,11 @@ impl<'a> Parser<'a> {
             Ident(s) => {
                 let next_tok = self.lexer.peek();
                 match next_tok.t {
-                    // LParen => {
-                    //     self.lexer.next();
-                    //     let e_list = self.fn_args();
-                    //     node!(E; tok, FnCall(s, e_list))
-                    // }
+                    LParen => {
+                        self.lexer.next();
+                        let e_list = self.fn_args();
+                        node!(E; tok, FnCall(s, e_list))
+                    }
                     _ => node!(E; tok, Ident(s)),
                 }
             }
