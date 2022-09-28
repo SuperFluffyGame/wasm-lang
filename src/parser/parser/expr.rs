@@ -1,6 +1,9 @@
 use crate::{
     match_tok_single, node,
-    parser::parser::expects::{self, Expects},
+    parser::{
+        parser::expects::{self, Expects},
+        Stmt,
+    },
     parser_error,
 };
 
@@ -97,6 +100,27 @@ impl<'a> Parser<'a> {
     // binary_expr!(exp_expr, primary_expr, [])
 
     list!(fn_args; RParen; RParen);
+
+    pub(super) fn block(&mut self) -> Vec<Stmt> {
+        let mut stmts = Vec::new();
+        match_tok_single!(S; self; lb_tok; Expects::LBrace; LBrace => {
+            loop {
+                let tok = self.lexer.peek();
+                if let RBrace = tok.t {
+                    self.lexer.next();
+                    break;
+                } else {
+                    stmts.push(self.stmt());
+                }
+            }
+            node!(S; lb_tok, Error)
+        });
+
+        stmts
+    }
+    fn block_expr(&mut self) -> Expr {
+        todo!()
+    }
 
     fn primary_expr(&mut self) -> Expr {
         use TokenType::*;

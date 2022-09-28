@@ -9,4 +9,5 @@ pub enum Expects {
     RParen,
     Comma,
     Multi(Vec<Expects>),
+    LBrace,
 }

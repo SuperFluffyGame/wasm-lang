@@ -15,6 +15,7 @@ impl<'a> Parser<'a> {
     }
 
     fn fn_decl_stmt(&mut self) -> Stmt {
+        match_tok_single!(S; self; kw_fn_tok; Expects::Fn)
         todo!()
     }
 
@@ -22,6 +23,7 @@ impl<'a> Parser<'a> {
     pub(super) fn stmt(&mut self) -> Stmt {
         match self.lexer.peek().t {
             TokenType::KwLet => self.let_stmt(),
+            TokenType::KwFn => self.fn_decl_stmt(),
             _ => {
                 let e = self.expr();
                 let line = e.line;
