@@ -1,5 +1,5 @@
 #[allow(unused)]
-#[derive(Debug)]
+#[derive(Debug, Clone)]
 pub enum Expects {
     PrimaryExpr,
     Semi,
@@ -8,6 +8,10 @@ pub enum Expects {
     Equal,
     RParen,
     Comma,
-    Multi(Vec<Expects>),
     LBrace,
+
+    LetStmt,
+    FnDeclStmt,
+
+    Stmt,
 }

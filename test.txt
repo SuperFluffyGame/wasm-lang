@@ -2,8 +2,7 @@ let a = 1;
 let b = 2;
 let c = a + 1;
 
-let d = print(100, 200, 300,null, 2); oooooooo;
+let d = print(100, 200, 300,null, 2;
 
-fn a() {
-    
-}
+
+-=
