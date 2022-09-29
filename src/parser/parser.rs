@@ -36,25 +36,25 @@ impl<'a> Parser<'a> {
 #[macro_export]
 macro_rules! parser_error {
     (E; $self:ident, $tok:ident, $expects:expr) => {{
-        $self.error(crate::parser::parser::ParserError {
-            t: crate::parser::parser::ParserErrorType::ExpectedButGot($expects, $tok.t),
+        $self.error($crate::parser::parser::ParserError {
+            t: $crate::parser::parser::ParserErrorType::ExpectedButGot($expects, $tok.t),
             line: $tok.line,
             col: $tok.col,
         });
-        crate::parser::parser::tree::Expr::new(
-            crate::parser::parser::tree::ExprType::Error,
+        $crate::parser::parser::tree::Expr::new(
+            $crate::parser::parser::tree::ExprType::Error,
             $tok.line,
             $tok.col,
         )
     }};
     (S; $self:ident, $tok:ident, $expects:expr) => {{
-        $self.error(crate::parser::parser::ParserError {
-            t: crate::parser::parser::ParserErrorType::ExpectedButGot($expects, $tok.t),
+        $self.error($crate::parser::parser::ParserError {
+            t: $crate::parser::parser::ParserErrorType::ExpectedButGot($expects, $tok.t),
             line: $tok.line,
             col: $tok.col,
         });
-        crate::parser::parser::tree::Stmt::new(
-            crate::parser::parser::tree::StmtType::Error,
+        $crate::parser::parser::tree::Stmt::new(
+            $crate::parser::parser::tree::StmtType::Error,
             $tok.line,
             $tok.col,
         )
@@ -63,14 +63,14 @@ macro_rules! parser_error {
 
 #[macro_export]
 macro_rules! match_tok_single {
-    ($type:ident; $self:ident; $tok_var:ident; [$($expects:expr),*]; $to_match:pat => $then:expr) => {{
-        use crate::parser::lexer::tokens::TokenType::*;
+    ($type:ident; $self:ident; $tok_var:ident; $expects:expr; $to_match:pat => $then:expr) => {{
+        use $crate::parser::lexer::tokens::TokenType::*;
 
         let $tok_var = $self.lexer.next();
         if let $to_match = $tok_var.t.clone() {
             $then
         } else {
-            crate::parser_error!($type; $self, $tok_var, vec![$($expects),*])
+            $crate::parser_error!($type; $self, $tok_var, $expects)
         }
     }};
         ($type:ident; $self:ident; $tok_var:ident; $expects:expr; $to_match:pat => $then:expr) => {
@@ -81,11 +81,11 @@ macro_rules! match_tok_single {
 #[macro_export]
 macro_rules! node {
     (S; $tok:ident, $type:expr) => {{
-        use crate::parser::parser::tree::StmtType::*;
-        crate::parser::parser::tree::Stmt::new($type, $tok.line, $tok.col)
+        use $crate::parser::parser::tree::StmtType::*;
+        $crate::parser::parser::tree::Stmt::new($type, $tok.line, $tok.col)
     }};
     (E; $tok:ident, $type:expr) => {{
-        use crate::parser::parser::tree::ExprType::*;
-        crate::parser::parser::tree::Expr::new($type, $tok.line, $tok.col)
+        use $crate::parser::parser::tree::ExprType::*;
+        $crate::parser::parser::tree::Expr::new($type, $tok.line, $tok.col)
     }};
 }
